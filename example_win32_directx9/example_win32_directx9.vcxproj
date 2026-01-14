@@ -170,6 +170,7 @@
     <ClCompile Include="frontend\MenuElements.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="backend\WaveData.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx9.h" />

@@ -2,26 +2,7 @@
 #include "../imgui/imgui.h"
 #include "../imgui/implot.h"
 #include "../Settings.h"
-
-struct WaveData
-{
-	double X, Amp, Freq, Offset;
-	WaveData(double x, double amp, double freq, double offset) { X = x; Amp = amp; Freq = freq; Offset = offset; }
-};
-
-ImPlotPoint SineWave(int idx, void* data) 
-{
-	WaveData* wd = (WaveData*)data;
-	double x = idx * wd->X;
-	return ImPlotPoint(x, wd->Offset + wd->Amp * sin(2 * 3.14 * wd->Freq * x));
-}
-
-ImPlotPoint CosWave(int idx, void* data)
-{
-	WaveData* wd = (WaveData*)data;
-	double x = idx * wd->X;
-	return ImPlotPoint(x, wd->Offset + wd->Amp * cos(2 * 3.14 * wd->Freq * x));
-}
+#include "../backend/WaveData.h"
 
 void MenuElements::MainWindow()
 {
@@ -31,7 +12,18 @@ void MenuElements::MainWindow()
 	static float flFrequency;
 	static float flAmplitude = 1;
 	static bool bFitToAxes = false;
-	WaveData data1(0.001, flAmplitude, flFrequency, 0);
+
+	static double dlStartTime = ImGui::GetTime();
+	static double dlDiffTime = 0.0;
+
+	static bool bRealTime = false;
+
+	WaveData data1(0.001, flAmplitude, flFrequency, 0, dlStartTime);
+	if (!bRealTime)
+	{
+		dlDiffTime = data1.m_dlTimeDiff;
+		dlStartTime = ImGui::GetTime();
+	}
 
 	ImGui::BeginChild("Main", ImVec2(g_Settings.m_vecWindowSize.x - 35, g_Settings.m_vecWindowSize.y - 55));
 	{
@@ -64,6 +56,8 @@ void MenuElements::MainWindow()
 		}
 		ImPlot::EndPlot();
 
+		if (ImGui::Button("График в реальном времени"))
+			bRealTime = !bRealTime;
 	}
 	ImGui::EndChild();
 }
